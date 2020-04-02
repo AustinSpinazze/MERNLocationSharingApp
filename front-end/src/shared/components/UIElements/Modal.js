@@ -16,7 +16,7 @@ const ModalOverlay = props => {
       <form
         onSubmit={
           // prettier-ignore
-          props.onSubmit ? props.onSubmit : (event => event.preventDefault)
+          props.onSubmit ? props.onSubmit : (event => event.preventDefault())
         }
       >
         <div className={`modal_content ${props.contentClass}`}>
@@ -29,7 +29,7 @@ const ModalOverlay = props => {
     </div>
   );
 
-  return ReactDOM.createPortal(null, document.getElementById("modal-hook"));
+  return ReactDOM.createPortal(content, document.getElementById("modal-hook"));
 };
 
 const Modal = props => {
