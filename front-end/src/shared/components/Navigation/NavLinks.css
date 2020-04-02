@@ -21,12 +21,15 @@
     padding: 0.5rem;
 }
 
-.nav-links a:hover,
 .nav-links a:active,
 .nav-links a.active {
-    background: #f8df00;
-    border-color: #292929;
-    color: #292929;
+    /* background: #0854ac; */
+    border-bottom: 1px solid #00dff3;
+    color: #00dff3;
+}
+
+.nav-links a:hover {
+    color: #00dff3;
 }
 
 .nav-links button {
