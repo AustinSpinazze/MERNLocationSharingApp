@@ -1,6 +1,6 @@
 import React, { useReducer, useEffect } from "react";
 
-import { validate } from "../../util/validator";
+import { validate } from "../../util/validators";
 import "./Input.css";
 
 const inputReducer = (state, action) => {
@@ -11,18 +11,18 @@ const inputReducer = (state, action) => {
         value: action.val,
         isValid: validate(action.val, action.validators),
       };
-    case "TOUCH":
+    case "TOUCH": {
       return {
         ...state,
         isTouched: true,
       };
-
+    }
     default:
       return state;
   }
 };
-// prettier-ignore
-const Input = props => {
+
+const Input = (props) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
     value: "",
     isTouched: false,

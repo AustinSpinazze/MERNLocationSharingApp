@@ -4,9 +4,9 @@ import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import {
   VALIDATOR_REQUIRE,
-  VALIDATOR_MAXLENGTH,
   VALIDATOR_MINLENGTH,
-} from "../../shared/util/validator";
+  VALIDATOR_MAXLENGTH,
+} from "../../shared/util/validators";
 import "./NewPlace.css";
 
 const formReducer = (state, action) => {
@@ -14,7 +14,7 @@ const formReducer = (state, action) => {
     case "INPUT_CHANGE":
       let formIsValid = true;
       for (const inputId in state.inputs) {
-        if (inputId === -action.inputId) {
+        if (inputId === action.inputId) {
           formIsValid = formIsValid && action.isValid;
         } else {
           formIsValid = formIsValid && state.inputs[inputId].isValid;
@@ -65,21 +65,19 @@ const NewPlace = () => {
         type="text"
         label="Title"
         validators={[VALIDATOR_REQUIRE(), VALIDATOR_MAXLENGTH(25)]}
-        errorText={"Title must be 25 chracter or less and cannot be empty."}
+        errorText="Please enter a valid title (cannot be null or more than 25 characters)."
         onInput={inputHandler}
       />
       <Input
         id="description"
-        element="textArea"
+        element="textarea"
         label="Description"
         validators={[VALIDATOR_MINLENGTH(5), VALIDATOR_MAXLENGTH(50)]}
-        errorText={
-          "Please enter a valid description (must be between 5 and 50 characters)"
-        }
+        errorText="Please enter a valid description (at least 5 characters and no more than 50 characters)."
         onInput={inputHandler}
       />
       <Button type="submit" disabled={!formState.isValid}>
-        Add Place
+        ADD PLACE
       </Button>
     </form>
   );
