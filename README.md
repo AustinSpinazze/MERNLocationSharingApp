@@ -1,0 +1,1 @@
+This is a full stack application in progress that allows users to create accounts, post images of places, mark them with Google Maps, and more. This application was built using the MERN (MongoDB, ExpressJS, ReactJS, NodeJS) Stack
