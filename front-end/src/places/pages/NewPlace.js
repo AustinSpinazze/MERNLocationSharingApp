@@ -6,7 +6,7 @@ import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH,
   VALIDATOR_MAXLENGTH,
-} from "../../shared/util/validators";
+} from "../../shared/util/validator";
 import "./NewPlace.css";
 
 const formReducer = (state, action) => {
