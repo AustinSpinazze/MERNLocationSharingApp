@@ -1,9 +1,10 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useContext } from "react";
 
 import Card from "../../shared/components/UIElements/Card";
 import Button from "../../shared/components/FormElements/Button";
 import Modal from "../../shared/components/UIElements/Modal";
 import Map from "../../shared/components/UIElements/Map";
+import { AuthContext } from "../../shared/context/auth-context";
 import "./PlaceItem.css";
 
 const PlaceItem = (props) => {
@@ -15,14 +16,16 @@ const PlaceItem = (props) => {
 
   const closeMapHandler = () => setShowMap(false);
 
-  const openConfirmHandler = () => setShowConfirmModal(true)
+  const openConfirmHandler = () => setShowConfirmModal(true);
 
-  const closeConfirmHandler = () => setShowConfirmModal(false)
+  const closeConfirmHandler = () => setShowConfirmModal(false);
 
   const confirmDeleteHandler = () => {
-    setShowConfirmModal(false)
+    setShowConfirmModal(false);
     console.log("Deleting...");
   };
+
+  const auth = useContext(AuthContext);
 
   return (
     <React.Fragment>
@@ -72,10 +75,16 @@ const PlaceItem = (props) => {
             <Button inverse onClick={openMapHandler}>
               View On Map
             </Button>
-            <Button inverse to={`/places/${props.id}`}>
-              Edit
-            </Button>
-            <Button danger onClick={openConfirmHandler}>Delete</Button>
+            {auth.isLoggedIn && (
+              <Fragment>
+                <Button inverse to={`/places/${props.id}`}>
+                  Edit
+                </Button>
+                <Button danger onClick={openConfirmHandler}>
+                  Delete
+                </Button>
+              </Fragment>
+            )}
           </div>
         </Card>
       </li>
