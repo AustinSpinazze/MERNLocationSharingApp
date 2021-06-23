@@ -1,9 +1,13 @@
 const express = require("express");
 
-const app = express();
+const usersController = require("../controllers/users-controller");
 
-// app.get("/api/users", () => {});
+const router = express.Router();
 
-// app.post("/api/users/signup", () => {});
+router.get("/users", usersController.getUsers);
 
-// app.post("/api/users/login", () => {});
+router.post("/users/signup", usersController.signUp);
+
+router.post("/users/login", usersController.login);
+
+module.exports = router;
