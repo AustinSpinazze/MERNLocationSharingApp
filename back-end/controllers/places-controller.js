@@ -1,6 +1,8 @@
 const { v4: uuid } = require("uuid");
+const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
+const getCoordsForAddress = require("../utils/location");
 
 let DUMMY_PLACES = [
   {
@@ -49,7 +51,7 @@ const getPlaceByPlaceId = (req, res, next) => {
 const getPlacesByUserId = (req, res, next) => {
   const userId = req.params.uid;
 
-  const places = DUMMY_PLACES.filter(p => {
+  const places = DUMMY_PLACES.filter((p) => {
     return p.creator === userId;
   });
 
@@ -65,9 +67,21 @@ const getPlacesByUserId = (req, res, next) => {
   res.json({ places });
 };
 
-const createPlace = (req, res, next) => {
-  const { title, description, imageUrl, address, coordinates, creator } =
-    req.body;
+const createPlace = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const { msg } = errors.errors[0];
+    return next(new HttpError(msg, 400));
+  }
+
+  const { title, description, imageUrl, address, creator } = req.body;
+
+  try {
+    coordinates = await getCoordsForAddress(address);
+  } catch (error) {
+    return next(error);
+  }
+
   const createdPlace = {
     id: uuid(),
     title,
@@ -84,6 +98,12 @@ const createPlace = (req, res, next) => {
 };
 
 const updatePlace = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const { msg } = errors.errors[0];
+    throw new HttpError(msg, 400);
+  }
+
   const { title, description } = req.body;
   const placeId = req.params.pid;
 
@@ -105,11 +125,13 @@ const updatePlace = (req, res, next) => {
 const deletePlace = (req, res, next) => {
   const placeId = req.params.pid;
 
-  DUMMY_PLACES = DUMMY_PLACES.filter(p => p.id !== placeId);
+  if (!DUMMY_PLACES.find((place) => place.id === placeId)) {
+    throw new HttpError("Could not find place with given id.", 404);
+  }
 
-  res.status(200).json({message: `${placeId} was deleted.`});
+  DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== placeId);
 
-
+  res.status(200).json({ message: `${placeId} was deleted.` });
 };
 
 exports.getPlaceByPlaceId = getPlaceByPlaceId;

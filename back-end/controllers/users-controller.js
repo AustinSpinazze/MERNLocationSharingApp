@@ -1,4 +1,5 @@
 const { v4: uuid } = require("uuid");
+const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
 
@@ -17,12 +18,18 @@ const getUsers = (req, res, next) => {
 };
 
 const signUp = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const { msg } = errors.errors[0];
+    throw new HttpError(msg, 400);
+  }
+
   const { name, userName, email, password } = req.body;
 
-  const userExists = DUMMY_USERS.find(user => user.email === email);
+  const userExists = DUMMY_USERS.find((user) => user.email === email);
 
-  if(userExists) {
-      throw new HttpError("Could not create user, email already in use.", 409);
+  if (userExists) {
+    throw new HttpError("Could not create user, email already in use.", 409);
   }
 
   const createdUser = {
@@ -39,15 +46,15 @@ const signUp = (req, res, next) => {
 };
 
 const login = (req, res, next) => {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    const identifiedUser = DUMMY_USERS.find(user => user.email === email);
+  const identifiedUser = DUMMY_USERS.find((user) => user.email === email);
 
-    if(!identifiedUser || identifiedUser.password !== password) {
-        throw new HttpError('Invalid username or password.', 401);
-    }
+  if (!identifiedUser || identifiedUser.password !== password) {
+    throw new HttpError("Invalid username or password.", 401);
+  }
 
-    return res.json({message: "Authorized"});
+  return res.json({ message: "Authorized" });
 };
 
 exports.getUsers = getUsers;
