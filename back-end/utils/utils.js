@@ -24,4 +24,25 @@ const toPlaceResponseMapper = (object, protocol, host, baseUrl, fullUrl) => {
   return response;
 }
 
+const toUserResponseMapper = (object, protocol, host) => {
+
+  const response = {
+    userId: object.userId,
+    name: object.name,
+    email: object.email,
+    username: object.username,
+    password: object.password,
+    image: "https://austinspinazze.dev/public/images/profile.jpeg",
+    places: object.places,
+    _links: {
+      self: {
+        href: (protocol + "://" + host + "/api/user/" + object.userId)
+      }
+    }
+  }
+
+  return response;
+}
+
 exports.toPlaceResponseMapper = toPlaceResponseMapper;
+exports.toUserResponseMapper = toUserResponseMapper;

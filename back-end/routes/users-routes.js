@@ -18,13 +18,16 @@ router.post(
     check("password")
       .isLength({ min: 6 })
       .withMessage("Please enter a password at least 6 characters long."),
-    check("userName")
+    check("username")
       .isLength({ min: 5 })
       .withMessage("Please enter a username at least 5 characters long."),
   ],
   usersController.signUp
 );
 
-router.post("/users/login", usersController.login);
+router.post("/users/login", [
+  check("email").not().isEmpty().withMessage("Please enter an email"),
+  check("password").not().isEmpty().withMessage("Please enter your password"),
+], usersController.login);
 
 module.exports = router;
