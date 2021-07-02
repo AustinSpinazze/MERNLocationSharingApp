@@ -35,7 +35,7 @@ const signUp = async (req, res, next) => {
     return next(new HttpError(msg, 400));
   }
 
-  const { name, username, email, password, image, places } = req.body;
+  const { name, username, email, password } = req.body;
 
   const protocol = req.protocol;
 
@@ -68,7 +68,7 @@ const signUp = async (req, res, next) => {
     image: "https://austinspinazze.dev/public/images/profile.jpeg",
     username,
     password,
-    places
+    places: []
   });
 
   try {

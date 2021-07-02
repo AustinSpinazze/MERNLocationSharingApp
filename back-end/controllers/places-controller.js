@@ -1,10 +1,12 @@
 const { v4: uuid } = require("uuid");
 const { validationResult } = require("express-validator");
+const mongoose = require("mongoose");
 
 const HttpError = require("../models/http-error");
 const getCoordsForAddress = require("../utils/location");
 const { toPlaceResponseMapper } = require("../utils/utils");
 const Place = require("../models/place");
+const User = require("../models/user");
 
 const getPlaceByPlaceId = async (req, res, next) => {
 
@@ -99,12 +101,39 @@ const createPlace = async (req, res, next) => {
     creator
   });
 
+  let user;
+
   try {
-    await createdPlace.save();
+    user = await User.findOne({ userId: creator });
+  } catch (error) {
+    return next(
+      new HttpError(
+        "Something went wrong while trying to find the user.",
+        500
+      )
+    );
+  }
+
+  if (!user) {
+    return next(
+      new HttpError(
+        "Could not find user for provided id",
+        404
+      )
+    );
+  }
+
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await createdPlace.save({ session: session });
+    user.places.push(createdPlace);
+    await user.save({ session: session });
+    await session.commitTransaction();
   } catch (err) {
     return next(
       new HttpError(
-        "Failed to create new place, please try again!",
+        "Failed to create new place, please try again!" + err,
         500
       )
     );
@@ -163,18 +192,32 @@ const deletePlace = async (req, res, next) => {
   let place;
 
   try {
-    place = await Place.findOne({ placeId: placeId });
+    place = await Place.findOne({ placeId: placeId }).populate({ path: "creatorRelation" });
   } catch (error) {
     return next(
       new HttpError(
-        "Something went wrong while trying to find selected place.",
+        "Something went wrong while trying to find selected place." + error,
         500
       )
     );
   }
 
+  if (!place) {
+    return next(
+      new HttpError(
+        `No place with provided place id ${placeId} found.`,
+        404
+      )
+    );
+  }
+
   try {
-    await place.remove();
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await place.remove({ session: session });
+    place.creatorRelation.places.pull(place);
+    await place.creatorRelation.save({ session: session });
+    await session.commitTransaction();
   } catch (error) {
     return next(
       new HttpError(
