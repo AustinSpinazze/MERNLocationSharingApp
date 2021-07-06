@@ -1,5 +1,4 @@
 import React, { useState, useContext, Fragment } from 'react';
-import axios from 'axios';
 
 import Card from '../../shared/components/UIElements/Card';
 import Input from '../../shared/components/FormElements/Input';
@@ -14,16 +13,16 @@ import {
 } from '../../shared/util/validator';
 import { AuthContext } from "../../shared/context/auth-context";
 import { useForm } from '../../shared/hooks/form-hook';
+import { useHttpClient } from '../../shared/hooks/http-hook';
 import './Authenticate.css';
 
 const Authenticate = () => {
+  
   const auth = useContext(AuthContext);
 
   const [isLoginMode, setIsLoginMode] = useState(true);
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [error, setError] = useState();
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -67,60 +66,47 @@ const Authenticate = () => {
 
     event.preventDefault();
 
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      }
-    };
-
-    setIsLoading(true);
-
-    try {
-      if (isLoginMode) {
-        const body = {
+    if (isLoginMode) {
+      await sendRequest(
+        "/login",
+        "post",
+        "http://localhost:5000/api/users",
+        {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        {},
+        {
           email: formState.inputs.email.value,
           password: formState.inputs.password.value
-        };
+        })
+        .then(response => {
+          return response;
+        }).then(auth.login());
 
-        const responseData = await axios.post("http://localhost:5000/api/users/login", body, config)
-          .then(response => {
-            return response.data;
-          });
-
-        setIsLoading(false);
-        auth.login();
-      } else {
-        const body = {
+    } else {
+      await sendRequest(
+        "/signup",
+        "post",
+        "http://localhost:5000/api/users",
+        {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        {},
+        {
           name: formState.inputs.name.value,
           username: formState.inputs.username.value,
           email: formState.inputs.email.value,
           password: formState.inputs.password.value
-        };
-
-        const responseData = await axios.post("http://localhost:5000/api/users/signup", body, config)
-          .then(response => {
-            return response.data;
-          });
-
-        setIsLoading(false);
-        auth.login();
-      }
-    } catch (error) {
-      console.log();
-      setIsLoading(false);
-      setError(error.response.data.message || "Something went wrong, please try again.");
+        })
+        .then(auth.login());
     }
   };
 
-  const errorHandler = () => {
-
-    setError(null);
-  }
-
   return (
     <Fragment>
-      <ErrorModal error={error} onClear={errorHandler} />
+      <ErrorModal error={error} onClear={clearError} />
       <Card className="authentication">
         {isLoading && <LoadingSpin asOverlay />}
         <h2>Login Required</h2>
