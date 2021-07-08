@@ -17,11 +17,8 @@ const Users = () => {
         const response = await sendRequest(
           "/users",
           "get",
-          "http://localhost:5000/api",
-          {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          });
+          "http://localhost:5000/api"
+        );
 
         setUsers(response.data.users);
 

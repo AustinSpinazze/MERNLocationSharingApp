@@ -73,11 +73,6 @@ const Authenticate = () => {
           "post",
           "http://localhost:5000/api/users",
           {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          {},
-          {
             email: formState.inputs.email.value,
             password: formState.inputs.password.value
           });
@@ -96,11 +91,6 @@ const Authenticate = () => {
           "/signup",
           "post",
           "http://localhost:5000/api/users",
-          {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          {},
           {
             name: formState.inputs.name.value,
             username: formState.inputs.username.value,

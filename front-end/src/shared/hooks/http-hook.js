@@ -14,7 +14,12 @@ export const useHttpClient = () => {
         return axiosSource.current.token;
     };
 
-    const sendRequest = useCallback(async (url, method = "get", baseURL, headers = {}, params = {}, data = {}) => {
+    const sendRequest = useCallback(async (
+        url,
+        method = "get",
+        baseURL, data = {},
+        headers = {},
+        params = {}) => {
 
         setIsLoading(true);
 
