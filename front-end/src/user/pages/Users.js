@@ -1,53 +1,42 @@
 import React, { useEffect, useState, Fragment } from "react";
-import axios from "axios";
 
 import UsersList from "../components/UsersList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const Users = () => {
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [error, setError] = useState(null);
-
   const [users, setUsers] = useState([]);
 
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
   useEffect(() => {
-
-    const sendRequest = async () => {
-
-      setIsLoading(true);
-
+    const getUsers = async () => {
       try {
-        const responseData = await axios.get("http://localhost:5000/api/users")
-          .then(response => {
-            return response.data;
+        const response = await sendRequest(
+          "/users",
+          "get",
+          "http://localhost:5000/api",
+          {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
           });
 
-        setUsers(responseData.users);
+        setUsers(response.data.users);
 
-        setIsLoading(false);
       } catch (error) {
         console.log(error);
-        setIsLoading(false);
-        setError(error.response.data.message || "Something went wrong, please try again.");
       }
-
-      setIsLoading(false);
     };
 
-    sendRequest();
+    getUsers();
 
   }, []);
 
-  const errorHandler = () => {
-    setError(null);
-  }
-
   return (
     <Fragment>
-      <ErrorModal error={error} onClose={errorHandler} />
+      <ErrorModal error={error} onClear={clearError} />
       {isLoading && (
         <div className="center">
           <LoadingSpinner />

@@ -27,14 +27,12 @@ export const useHttpClient = () => {
             data,
             cancelToken: createNewCancelToken()
         }).then(response => {
-            console.log(response);
             return response;
         }).catch(error => {
             if (isCancel(error)) {
                 return;
             }
             else {
-                console.log(error.response.data.message);
                 setError(
                     error.response.data.message
                     || "Something went wrong, please try again.");
