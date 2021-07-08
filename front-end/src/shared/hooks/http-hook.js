@@ -18,37 +18,32 @@ export const useHttpClient = () => {
 
         setIsLoading(true);
 
-        try {
-            const responseData = await axios.request({
-                url,
-                method,
-                baseURL,
-                headers,
-                params,
-                data,
-                cancelToken: createNewCancelToken()
-            }).then(response => {
-                console.log(response);
-                return response.data;
-            }).catch(error => {
-                if (isCancel(error)) {
-                    return;
-                }
-            });
+        const responseData = await axios.request({
+            url,
+            method,
+            baseURL,
+            headers,
+            params,
+            data,
+            cancelToken: createNewCancelToken()
+        }).then(response => {
+            console.log(response);
+            return response;
+        }).catch(error => {
+            if (isCancel(error)) {
+                return;
+            }
+            else {
+                console.log(error.response.data.message);
+                setError(
+                    error.response.data.message
+                    || "Something went wrong, please try again.");
+            }
+        });
 
-            setIsLoading(false);
+        setIsLoading(false);
 
-            return responseData;
-        } catch (err) {
-            console.log(err);
-            setError(
-                err
-                || "Something went wrong, please try again.");
-
-            setIsLoading(false);
-
-            throw err;
-        }
+        return responseData;
 
     }, []);
 
@@ -59,10 +54,10 @@ export const useHttpClient = () => {
     // Cancel all pending requests when unmounting the component
     useEffect(
         () => () => {
-          if (axiosSource.current) axiosSource.current.cancel();
+            if (axiosSource.current) axiosSource.current.cancel();
         },
         []
-      );
+    );
 
     return { isLoading, error, sendRequest, clearError };
 };

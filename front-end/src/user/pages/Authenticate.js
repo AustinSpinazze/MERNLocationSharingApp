@@ -17,7 +17,7 @@ import { useHttpClient } from '../../shared/hooks/http-hook';
 import './Authenticate.css';
 
 const Authenticate = () => {
-  
+
   const auth = useContext(AuthContext);
 
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -67,40 +67,54 @@ const Authenticate = () => {
     event.preventDefault();
 
     if (isLoginMode) {
-      await sendRequest(
-        "/login",
-        "post",
-        "http://localhost:5000/api/users",
-        {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        {},
-        {
-          email: formState.inputs.email.value,
-          password: formState.inputs.password.value
-        })
-        .then(response => {
-          return response;
-        }).then(auth.login());
+      try {
+        const response = await sendRequest(
+          "/login",
+          "post",
+          "http://localhost:5000/api/users",
+          {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          {},
+          {
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value
+          });
+
+        if (response.status === 200) {
+          auth.login();
+        }
+      }
+      catch (error) {
+        console.log(error);
+      };
 
     } else {
-      await sendRequest(
-        "/signup",
-        "post",
-        "http://localhost:5000/api/users",
-        {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        {},
-        {
-          name: formState.inputs.name.value,
-          username: formState.inputs.username.value,
-          email: formState.inputs.email.value,
-          password: formState.inputs.password.value
-        })
-        .then(auth.login());
+      try {
+        const response = await sendRequest(
+          "/signup",
+          "post",
+          "http://localhost:5000/api/users",
+          {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          {},
+          {
+            name: formState.inputs.name.value,
+            username: formState.inputs.username.value,
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value
+          });
+
+        if (response.status === 201) {
+          auth.login();
+        }
+      }
+      catch (error) {
+        console.log(error);
+      }
     }
   };
 
