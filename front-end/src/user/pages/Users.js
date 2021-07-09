@@ -1,15 +1,18 @@
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment, useContext } from "react";
 
 import UsersList from "../components/UsersList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import { AuthContext } from "../../shared/context/auth-context";
 
 const Users = () => {
 
   const [users, setUsers] = useState([]);
 
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
+  const auth = useContext(AuthContext);
 
   useEffect(() => {
     const getUsers = async () => {
@@ -20,7 +23,11 @@ const Users = () => {
           "http://localhost:5000/api"
         );
 
-        setUsers(response.data.users);
+        let cleanedResponse = response.data.users.filter((user, index, array) => {
+          return user.userId !== auth.userId;
+        });
+
+        setUsers(cleanedResponse);
 
       } catch (error) {
         console.log(error);
@@ -29,7 +36,7 @@ const Users = () => {
 
     getUsers();
 
-  }, []);
+  }, [sendRequest, auth.userId]);
 
   return (
     <Fragment>
