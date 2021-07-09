@@ -16,13 +16,14 @@ const PlaceList = props => {
       </div>
     );
   }
+
   return (
     <ul className="place-list">
-      {props.items.map(place => (
+      {props.items.map((place, index) => (
         <PlaceItem
-          key={place.id}
+          key={index}
           id={place.id}
-          image={place.imageUrl}
+          image={place.image}
           title={place.title}
           description={place.description}
           address={place.address}

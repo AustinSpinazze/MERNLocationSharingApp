@@ -58,6 +58,10 @@
   height: 100%;
 }
 
+.place-item__bar {
+  border-top: 1px solid rgb(174, 174, 174);
+}
+
 .map-container {
   height: 10rem;
   width: 100%;

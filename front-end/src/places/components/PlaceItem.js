@@ -35,8 +35,7 @@ const PlaceItem = (props) => {
         header={props.address}
         contentClass="place-item__modal-content"
         footerClass="place-item__modal-actions"
-        footer={<Button onClick={closeMapHandler}>CLOSE</Button>}
-      >
+        footer={<Button onClick={closeMapHandler}>CLOSE</Button>}>
         <div className="map-container">
           <Map center={props.coordinates} zoom={16} />
         </div>
@@ -71,6 +70,7 @@ const PlaceItem = (props) => {
             <h3>{props.address}</h3>
             <p>{props.description}</p>
           </div>
+          <div className="place-item__bar"></div>
           <div className="place-item__actions">
             <Button inverse onClick={openMapHandler}>
               View On Map
