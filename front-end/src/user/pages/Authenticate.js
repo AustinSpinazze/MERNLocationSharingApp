@@ -78,7 +78,8 @@ const Authenticate = () => {
           });
 
         if (response.status === 200) {
-          auth.login();
+          console.log(response);
+          auth.login(response.data.user.userId);
         }
       }
       catch (error) {
@@ -99,7 +100,7 @@ const Authenticate = () => {
           });
 
         if (response.status === 201) {
-          auth.login();
+          auth.login(response.data.user.userId);
         }
       }
       catch (error) {

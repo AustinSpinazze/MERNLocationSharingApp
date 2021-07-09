@@ -93,6 +93,10 @@ const login = async (req, res, next) => {
     return next(new HttpError(msg, 400));
   }
 
+  const protocol = req.protocol;
+
+  const host = req.get("host");
+
   const { email, password } = req.body;
 
   let existingUser;
@@ -115,7 +119,7 @@ const login = async (req, res, next) => {
     );
   }
 
-  return res.json({ message: "Logged In!" });
+  return res.json({ message: "Logged In!", user: toUserResponseMapper(existingUser, protocol, host) });
 };
 
 exports.getUsers = getUsers;
