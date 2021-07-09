@@ -94,9 +94,9 @@ const PlaceItem = (props) => {
             <Button inverse onClick={openMapHandler}>
               View On Map
             </Button>
-            {auth.isLoggedIn && (
+            {auth.userId === props.creator && (
               <Fragment>
-                <Button inverse to={`/places/${props.id}`}>
+                <Button inverse to={`/places/${props.placeId}`}>
                   Edit
                 </Button>
                 <Button danger onClick={openConfirmHandler}>

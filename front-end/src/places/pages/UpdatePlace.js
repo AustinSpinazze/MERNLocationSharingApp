@@ -67,7 +67,6 @@ const UpdatePlace = () => {
           "get",
           "http://localhost:5000/api/places",
         );
-        console.log(response);
         setLoadedPlace(response.data);
         setFormData(
           {

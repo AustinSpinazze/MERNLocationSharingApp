@@ -10,12 +10,13 @@ const UserPlaces = () => {
 
   const [loadedPlaces, setLoadedPlaces] = useState([]);
 
+  const [error, setError] = useState(false);
+
   // react params are aware of any part of your route paths that start with : like :userId for example
   // basically gives us access to userId encoded in the url
   const userId = useParams().userId;
 
   const deletePlaceHandler = (deletedPlaceId) => {
-    console.log(deletedPlaceId);
     setLoadedPlaces(prevPlaces =>
       prevPlaces.filter(place => place.placeId !== deletedPlaceId));
   };
@@ -28,10 +29,11 @@ const UserPlaces = () => {
           "get",
           "http://localhost:5000/api/user"
         );
-
+        setError(false);
         setLoadedPlaces(response.data.places);
       } catch (error) {
-        console.log(error);
+        console.log("hey");
+        setError(true);
       }
     }
 
@@ -43,7 +45,13 @@ const UserPlaces = () => {
       {isLoading && (<div className="center">
         <LoadingSpinner asOverlay />
       </div>)}
-      {!isLoading && loadedPlaces && <PlaceList items={loadedPlaces} onDeletePlace={deletePlaceHandler} />}
+      {!isLoading && loadedPlaces &&
+        <PlaceList
+          items={loadedPlaces}
+          onDeletePlace={deletePlaceHandler}
+          error={error}
+          selectedUser={userId}
+        />}
     </Fragment>
   );
 };
