@@ -5,6 +5,7 @@ import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 
 import {
   VALIDATOR_EMAIL,
@@ -43,7 +44,8 @@ const Authenticate = () => {
       setFormData(
         {
           ...formState.inputs,
-          name: undefined
+          name: undefined,
+          image: undefined
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -53,6 +55,10 @@ const Authenticate = () => {
           ...formState.inputs,
           name: {
             value: '',
+            isValid: false
+          },
+          image: {
+            value: null,
             isValid: false
           }
         },
@@ -65,6 +71,8 @@ const Authenticate = () => {
   const authSubmitHandler = async (event) => {
 
     event.preventDefault();
+
+    console.log('form data', formState.inputs);
 
     if (isLoginMode) {
       try {
@@ -127,6 +135,7 @@ const Authenticate = () => {
                 errorText="Please enter a name."
                 onInput={inputHandler}
               />
+              {!isLoginMode && <ImageUpload center id="image" onInput={inputHandler} />}
               <Input
                 element="input"
                 id="username"
@@ -153,7 +162,7 @@ const Authenticate = () => {
             type="password"
             label="Password"
             validators={[VALIDATOR_MINLENGTH(6)]}
-            errorText="Please enter a valid password, at least 5 characters."
+            errorText="Please enter a valid password, at least 6 characters."
             onInput={inputHandler}
           />
           <Button type="submit" disabled={!formState.isValid}>
